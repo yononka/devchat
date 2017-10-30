@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#004d4d"
+    >
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="0"
+        android:id="@+id/bVideoChat"
+        android:text="VideoChat"
+        android:onClick="onVideoChatButtonClicked"
+
+        />
+
+    <RadioGroup
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <RadioButton android:id="@+id/demo_chat"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="chat1"
+            android:textColor="#ffffff"
+            android:onClick="onRadioButtonClicked"/>
+        <RadioButton android:id="@+id/chacha2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="chat2"
+            android:textColor="#ffffff"
+            android:onClick="onRadioButtonClicked"/>
+    </RadioGroup>
+
+
+
+</LinearLayout>

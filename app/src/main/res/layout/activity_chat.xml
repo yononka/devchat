@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#003333"
+    >
+
+    <TextView
+        android:id="@+id/channelName_view"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="#003333"
+        android:textColor="#bfbfbf"
+        />
+<!--
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/bBackToList"
+        android:text="&lt;&lt; back to chats list"
+        android:textAllCaps="false"
+        />
+-->
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingRight="10dp"
+        android:background="#ffffff"
+        >
+
+        <EditText
+            android:id="@+id/newMessage"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:lines="2"
+            android:hint="@string/msg_hint"
+            android:inputType="textMultiLine" />
+
+        <Button
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:id="@+id/bSend"
+            android:text=">>"
+
+            />
+
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/scroll_msg_view">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/msg_list_view"
+            android:textColor="#ffffff"
+            android:background="#003333"
+            android:padding="10dp"
+
+            />
+
+    </ScrollView>
+
+</LinearLayout>

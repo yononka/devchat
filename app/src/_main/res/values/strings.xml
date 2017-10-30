@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">DevChat</string>
+    <string name="msg_hint">Type your message here...</string>
+</resources>
