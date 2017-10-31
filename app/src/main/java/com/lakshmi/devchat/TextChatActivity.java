@@ -17,24 +17,24 @@ import com.pubnub.api.callbacks.PNCallback;
 import com.pubnub.api.callbacks.SubscribeCallback;
 import com.pubnub.api.models.consumer.PNPublishResult;
 import com.pubnub.api.models.consumer.PNStatus;
+import com.pubnub.api.models.consumer.history.PNHistoryItemResult;
+import com.pubnub.api.models.consumer.history.PNHistoryResult;
 import com.pubnub.api.models.consumer.pubsub.PNMessageResult;
 import com.pubnub.api.models.consumer.pubsub.PNPresenceEventResult;
 
 import java.util.Arrays;
 
-import static com.lakshmi.devchat.InitPubNub.pubnub;
-
 public class TextChatActivity extends MainActivity {
 
-    static StringBuilder messages = new StringBuilder();
+    StringBuilder messages = new StringBuilder();
 
-   // public PubNub mPubnub;
     private String mUsername;
+    public PubNub mPubNub;
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        menu.findItem(R.id.logout).setVisible(true);
+     //   menu.findItem(R.id.logout).setVisible(true);
         return true;
     }
 
@@ -44,30 +44,26 @@ public class TextChatActivity extends MainActivity {
         setContentView(R.layout.activity_chat);
 
         Intent chat = getIntent();
-      //  final String pubkey = chat.getStringExtra("pub_key");
-      //  final String subkey= chat.getStringExtra("sub_key");
-      //  final String chatname= chat.getStringExtra("chat_name");
+        final String pubkey = chat.getStringExtra("pub_key");
+        final String subkey= chat.getStringExtra("sub_key");
+        final String chatname= chat.getStringExtra("chat_name");
 
-        final String chatname= "testchannel";
+        this.mUsername = chat.getStringExtra("user_name");
 
-
-        this.mUsername = chat.getStringExtra("nickname");
-
-      //  this.mPubnub = pubnub;
+        final PubNub pubnub = InitPubNub.pubnubDeclaration(pubkey, subkey, mUsername);
+        mPubNub = pubnub;
 
         TextView channel_name = (TextView) findViewById(R.id.channelName_view);
         channel_name.setText("welcome to " + chatname + " channel");
 
-        pubnub.subscribe()
+        mPubNub.subscribe()
                 .channels(Arrays.asList(chatname))
-                .withTimetoken(1337L)
                 .withPresence()
                 .execute();
 
+  //      long sub_time = pubnub.getTimestamp();
 
-
-/*
-        mPubnub.history()
+        mPubNub.history()
                 .channel(chatname)
                 .count(100)
                 .includeTimetoken(true)
@@ -79,25 +75,20 @@ public class TextChatActivity extends MainActivity {
                            for (PNHistoryItemResult item : result.getMessages()) {
                                 if (item.getEntry().isJsonObject()) {
                                     try {
-                                        String msg_history = mPubnub.getMapper().elementToString(item.getEntry(), "text");
-                                        String uuid_history = mPubnub.getMapper().elementToString(item.getEntry(), "username");
-                                        System.out.println("call showM from history json: " + msg_history); //////////////
+                                        String msg_history = mPubNub.getMapper().elementToString(item.getEntry(), "text");
+                                        String uuid_history = mPubNub.getMapper().elementToString(item.getEntry(), "username");
                                         showMessage(msg_history, uuid_history);
                                     } catch (Exception error) {
                                         System.out.println("I got an exception in displaying history in this line: " + item.getEntry().toString());
                                         String msg_history = item.getEntry().toString();
-                                        System.out.println("call showM from history wrongjson: " + msg_history); //////////////
                                         showMessage(msg_history, "<anonymous>");
 
                                     }
 
                                 }else{
                                     String msg_history = item.getEntry().toString();
-                                    System.out.println("call showM from history nonjson: " + msg_history); //////////////
                                     showMessage(msg_history, "<anonymous>");
                                 }
-
-                                //     history_list.add(history_entry);
 
                             }
 
@@ -107,7 +98,7 @@ public class TextChatActivity extends MainActivity {
                         }
                     }
                 });
-*/
+
 
         Button send_btn = (Button) findViewById(R.id.bSend);
 
@@ -128,7 +119,7 @@ public class TextChatActivity extends MainActivity {
                     e.printStackTrace();
                 }
 
-                pubnub.publish().message(data)
+                mPubNub.publish().message(data)
                         .channel(chatname)
                         .async(new PNCallback<PNPublishResult>() {
                             @Override
@@ -146,8 +137,7 @@ public class TextChatActivity extends MainActivity {
         );
 
 
-
-        pubnub.addListener(new SubscribeCallback() {
+        mPubNub.addListener(new SubscribeCallback() {
             @Override
             public void status(PubNub pubnub, PNStatus status) {
                 String status_msg = "PubNub status: " + status.getStatusCode();
@@ -156,26 +146,23 @@ public class TextChatActivity extends MainActivity {
 
             @Override
             public void message(PubNub pubnub, PNMessageResult message) {
-                //  long digit_time = message.getTimetoken()/10000000;
-                //  String time_msg = DateFormat.format("dd-MM-yyyy HH:mm:ss", digit_time).toString();
+            //      long msg_time = message.getTimetoken()/10000000;
+               //   String msg_time = DateFormat.format("dd-MM-yyyy HH:mm:ss", digit_time).toString();
 
-                if (message.getMessage().isJsonObject()) {
+            if (message.getMessage().isJsonObject()) {
 
                     try {
                         String msg = pubnub.getMapper().elementToString(message.getMessage(), "text");
                         String uuid_msg =  pubnub.getMapper().elementToString(message.getMessage(), "username");
-                        System.out.println("call showM from listener json: " + msg); //////////////
                         showMessage(msg, uuid_msg);
                     } catch (Exception error) {
                         System.out.println("I got an exception in displaying history in this line: " + message.getMessage().toString());
                         String msg = message.getMessage().toString();
-                        System.out.println("call showM from listener wrongjson: " + msg); //////////////
                         showMessage(msg, "<anonymous>");
                     }
 
                 }else{
                     String msg = message.getMessage().toString();
-                    System.out.println("call showM from listener nonjson: " + msg); //////////////
                     showMessage(msg, "<anonymous>");
                 }
 
@@ -188,11 +175,6 @@ public class TextChatActivity extends MainActivity {
         });
 
 
-
-
-
-
-/*
         Button backtolist_btn = (Button) findViewById(R.id.bBackToList);
 
         backtolist_btn.setOnClickListener(new View.OnClickListener() {
@@ -203,7 +185,7 @@ public class TextChatActivity extends MainActivity {
                 startActivity(chatslist);
             }
         }
-        );*/
+        );
 
     }
 
@@ -221,7 +203,7 @@ public class TextChatActivity extends MainActivity {
 
         switch (item.getItemId()) {
             case R.id.logout:
-                pubnub.unsubscribeAll();
+                mPubNub.unsubscribeAll();
                 finish();
                 System.exit(0);
                 return true;
